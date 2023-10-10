@@ -55,13 +55,12 @@ h1 {
 .navbar-links {
   list-style: none;
   display: flex;
-  margin: 0;
-  padding: 0;
+  margin: 0 10 px 0 0;
+  padding: 5px;
   align-items: left;
 }
-
 .navbar-item {
-  margin-right: 20px;
+  margin-right: 2px;
 }
 
 .navbar-link {
@@ -69,7 +68,12 @@ h1 {
   text-decoration: none;
   font-size: 16px;
 }
-
+.navbar-icon {
+  display: flex;
+  margin-right: 10px;
+  max-height: 30px;
+  max-width: 30px;
+}
 
 
 /* Add a max-width and center the content */
