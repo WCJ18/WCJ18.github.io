@@ -1,0 +1,128 @@
+/* Reset default margins and paddings */
+body, h1, h2, h3, p {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f7f7f7;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+}
+
+
+
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 0;
+}
+
+h1 {
+  font-size: 42px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/*nav bar*/
+.navbar-container {
+  max-width: 1800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  display: flex;
+  font-size: 24px;
+  padding-left: 2%;
+  text-decoration: none;
+  color: #fff;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  align-items: left;
+}
+
+.navbar-item {
+  margin-right: 20px;
+}
+
+.navbar-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+
+
+/* Add a max-width and center the content */
+.wrapped-paragraph {
+  width: 95%; /* Adjust this value as needed */
+  align-items: left;
+ /* margin: 0 auto;    Center the content horizontally */
+}
+
+
+/* main article formatting text*/
+.main_article {
+
+  align-content: center;
+  /* margin: 150px; */
+}
+.main_article p {
+  display: flex;
+  align-content: center;
+  text-align: center;
+  font-size: 20px;
+}
+
+
+
+/*main article pics*/
+.mainpic-container {
+  display: flex;
+  justify-content: center;
+}
+
+.mainpic {
+  max-width: 90%;
+  height: auto;
+}
+footer {
+  position: relative;
+  bottom: 2%;
+  width: 100%;
+  height: 4.5%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  background-color: #333;
+  color: #fff;
+}
+
+footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

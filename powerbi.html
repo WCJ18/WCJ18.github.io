@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Will Does Data - Data Analysis Portfolio">
+  <meta name="author" content="Will Johnson">
+  <link rel="stylesheet" href="styles.css">
+  <title>Will C Johnson - Power BI</title>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <a class="navbar-logo" href="/">Will C Johnson</a>
+        <ul class="navbar-links">
+          <li class="navbar-item">
+            <a class="navbar-link" aria-current="page" href="/">Home</a>
+            </li>
+          <li class="navbar-item">
+            <a class="navbar-link" aria-current="page" href="https://www.linkedin.com/in/williamchallingsworthjohnson/">LinkedIn</a>
+          </li>
+          <li class="navbar-item">
+            <a class="navbar-link" href="https://github.com/WCJ18">GitHub</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main> 
+    <h1> Power BI Sample</h1>
+    <hr>
+    </br>
+
+<!-- main article picture-->
+   <div class="mainpic-container">
+    <img class="mainpic" src="PowerBi_dashboardimg.png" alt="Power BI Dashboard Image">
+  </div>
+
+
+<!-- main article text-->
+<div class="main_article">
+
+<h2> Approach </h2>
+    For this example I take my swing at the the Adventure Works database (sales data from 2015-2017).
+
+I know it is an overused dataset, but its for good reason.
+
+My goal is to provide a "single" page report with minimalistic styling that shows high level metrics but also gives some insight into granular trends.
+  </br>
+<h3>Analyzing;</h3>
+
+<p>
+First things first, getting a good picture of the data istelf I see there are 3 tables for sales - one for each year. We also see many dimension tables Category, SubCategory, Products etc. 
+Now I make the assumtion that this model will star off the sales table(s).
+We are going to want to combine them together to get a single fact table for the model to be built as a star schema. 
+
+I also notice 2 tables for the product category; Product Categories and Product Subcategories.
+
+Another fact table is also present, the Returns table. I keep that in mind later for when I am modeling.
+</p>
+
+<h3>Querying;</h3>
+<p>
+As mentioned before, I append the three sales tables into a single fact table 'Sales Master'.
+
+I merge product categories onto the product subcategories table, creating a single dim table for category.
+
+I get a resfresh date using the below query
+
+	let
+    Source = DateTime.LocalNow(),
+    #"Converted to Table" = #table(1, {{Source}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Converted to Table",{{"Column1", type datetime}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Column1", "Last Refresh"}})
+in
+    #"Renamed Columns"
+  </p>	
+
+
+<h3>Modeling;</h3>
+
+<p>
+I create a star schema stemming off the sales master table. The connections are quite obvious thanks to the good construction of the dataset. I join the Date table (which i create using DAX below) to the Sales Master  - using the Date column and OrderDate respectively. I add a inactive join as well but use StockDate from sales master instead. This will be useful If I need to reference it in a DAX query.
+</p>
+
+
+<h5>DAX Tables;</h5>
+<p>
+I create 2 DAX tables, a date and a version table.
+
+Date = 
+VAR MinYear = YEAR ( MIN ( Calendar[Date] ) )
+VAR MaxYear = YEAR ( MAX ( Calendar[Date]) )
+RETURN
+ADDCOLUMNS (
+    FILTER (
+        CALENDARAUTO( ),
+        AND ( YEAR ( [Date] ) >= MinYear, YEAR ( [Date] ) <= MaxYear )
+    ),
+    "Calendar Year", "CY " & YEAR ( [Date] ),
+    "Month Name", FORMAT ( [Date], "mmmm" ),
+    "Month Short Name", FORMAT ( [Date], "mmm" ),
+    "Month Number", MONTH ( [Date] ),
+    "Month Year Number", MONTH ( [Date] ) & YEAR ( [Date] ),
+    "Quarter" , SWITCH(MONTH([Date]),
+                1,"Q1",2,"Q1",3,"Q1",
+                4,"Q2",6,"Q2",6,"Q2",
+                7,"Q3",8,"Q4",9,"Q4",
+                10,"Q4",11,"Q4","Q4"),
+    "Current Date", FORMAT(TODAY(), "mm/dd/yyyy")
+    )
+    
+Versioning Table = 
+DATATABLE(
+    "Version", STRING,
+    "Version Date", DATETIME,
+    {
+        {"v1.0"  ,  "8/10/2023" }
+    }
+)
+
+  </p>
+
+
+<h3>DAX Measures;</h3>
+<p>
+I added a few measures on the Sales table, some major ones are;
+
+Net Sales = 
+    SUMX(
+        'Sales Master', 
+        'Sales Master'[OrderQuantity] * RELATED(Products[ProductPrice])
+    )
+
+COGS = 
+	SUMX(
+		'Sales Master', 
+		'Sales Master'[OrderQuantity] * RELATED(Products[ProductCost])
+	)
+
+Gross Profit = 
+    CALCULATE(
+        ([Net Sales] - [COGS]) 
+    )
+	
+	
+Gross Margin % = 
+    CALCULATE(
+          ([COGS] / [Net Sales] ) + 0
+    ) // * 100
+	
+	
+  </p>
+
+<h3>Visaulizing;</h3>
+<p>
+  Basics page elements include last refresh card, Title and background rectangles for the headers and footer.
+Light grey background to make the visual section pop. Filter Icon on the left side above the buttons.
+Small icon in the bottom left for comfirming versioning.
+
+Large custom cards in the second header for the 4 most important figures.
+5 cards on the next row down, with some helpful numbers to keep in mind while examining the visuals.
+
+
+
+Using Bookmarks allowed for the app-like changing of the visuals based on the right-hand sides button's input.
+In Addition, I decided to go with a slicer panel, as well as a version tracker (small circle with an illegible "I" in the bottom right of the page). 
+
+Another contributor to the single page attempt is custom cards. I always find people love icons, and overlaying shapes, text box's, no background card's gives off a professional look that should be its own visual. 
+
+</p>
+
+  
+</div>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <p><a href="#">Back to top</a></p>
+    <p>&copy; 2023 William Challingsworth Johnson.</p>
+  </footer>
+  </main>
+</body>
+</html>
